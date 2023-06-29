@@ -137,8 +137,8 @@ public class ItemService {
             }
 
             // 5. image 엔터티 업데이트
-            log.info(String.format("/media/%d/%s", id, imageFilename));
-            itemEntity.setImageUrl(String.format("/media/%d/%s", id, imageFilename));
+            log.info(String.format("/static/%d/%s", id, imageFilename));
+            itemEntity.setImageUrl(String.format("/static/%d/%s", id, imageFilename));
             return ItemDto.fromEntity(repository.save(itemEntity));
 
         } else throw new PasswordNotCorrectException();
