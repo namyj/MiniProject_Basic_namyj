@@ -1,5 +1,6 @@
 package com.example.mutsamarket;
 
+import com.example.mutsamarket.dto.CommentDto;
 import com.example.mutsamarket.dto.ItemDto;
 import com.example.mutsamarket.entity.ItemEntity;
 import com.example.mutsamarket.exceptions.ItemNotFoundException;
@@ -17,9 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.nio.file.Files;
-import java.util.List;
 import java.util.Optional;
 
 
@@ -37,7 +36,7 @@ public class ItemService {
         newItem.setDescription(itemDto.getDescription());
         newItem.setMinPriceWanted(itemDto.getMinPriceWanted());
         newItem.setWriter(itemDto.getWriter());
-        newItem.setImageUrl(itemDto.getImageUrl());
+        // newItem.setImageUrl(itemDto.getImageUrl()); // 필수 X
         newItem.setPassword(itemDto.getPassword());
         newItem.setStatus("판매중");
 
@@ -53,7 +52,7 @@ public class ItemService {
         return ItemDto.fromEntity(optionalItem.get());
     }
 
-    public Page<ItemDto> readItemsPage(Integer page, Integer limit) {
+    public Page<ItemDto> readItems(Integer page, Integer limit) {
 
         if (page == null || limit == null) {
             page = 0;
@@ -67,16 +66,6 @@ public class ItemService {
         return itemDtoPage;
     }
 
-    // public List<ItemDto> readItems() {
-    //     List<ItemEntity> itemEntityList = repository.findAll();
-    //     List<ItemDto> itemDtoList = new ArrayList<>();
-    //
-    //     for (ItemEntity itemEntity : itemEntityList) {
-    //         itemDtoList.add(ItemDto.fromEntity(itemEntity));
-    //     }
-    //
-    //     return itemDtoList;
-    // }
 
     public ItemDto updateItem(Long id, ItemDto itemDto) {
         Optional<ItemEntity> optionalItemEntity = repository.findById(id);
@@ -145,7 +134,7 @@ public class ItemService {
 
     }
 
-    public void deleteItem(Long id, String writer, String password) {
+    public void deleteItem(Long id, ItemDto itemDto) {
         Optional<ItemEntity> optionalItemEntity = repository.findById(id);
 
         if (optionalItemEntity.isEmpty())
@@ -153,10 +142,9 @@ public class ItemService {
 
         ItemEntity itemEntity = optionalItemEntity.get();
 
-        if (itemEntity.getWriter().equals(writer) && itemEntity.getPassword().equals(password) ) {
+        if (itemEntity.getWriter().equals(itemDto.getWriter()) && itemEntity.getPassword().equals(itemDto.getPassword()) ) {
 
             repository.deleteById(id);
         } else throw new PasswordNotCorrectException();
-
     }
 }

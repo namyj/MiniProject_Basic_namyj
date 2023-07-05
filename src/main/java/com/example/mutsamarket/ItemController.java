@@ -35,14 +35,14 @@ public class ItemController {
 
     // GET /items?page=1&limit=20
     @GetMapping
-    public Page<ItemDto> readAllPage(
+    public Page<ItemDto> readAll(
             @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
             @RequestParam(value = "limit", required = false) Integer limit
     ) {
         log.info("page = " + page);
         log.info("limit = "+ limit);
 
-        return service.readItemsPage(page, limit);
+        return service.readItems(page, limit);
     }
 
     // GET /items/1
@@ -92,10 +92,9 @@ public class ItemController {
     @DeleteMapping("/{itemId}")
     public ResponseDto delete(
             @PathVariable("itemId") Long id,
-            @RequestParam(value = "writer") String writer,
-            @RequestParam(value = "password") String password
+            @RequestBody ItemDto itemDto
     ) {
-        service.deleteItem(id, writer, password);
+        service.deleteItem(id, itemDto);
 
         ResponseDto response = new ResponseDto();
         response.setMessage("물품을 삭제했습니다.");
