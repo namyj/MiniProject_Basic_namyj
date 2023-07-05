@@ -92,13 +92,14 @@ public class CommentService {
         if (optionalItemEntity.isEmpty())
             throw new ItemNotFoundException();
 
+        ItemEntity itemEntity = optionalItemEntity.get();
+
         // 2. Comment 정보 조회
         Optional<CommentEntity> optionalCommentEntity = commentRepository.findById(id);
 
         if (optionalCommentEntity.isEmpty())
             throw new CommentNotFoundException();
 
-        ItemEntity itemEntity = optionalItemEntity.get();
         CommentEntity commentEntity = optionalCommentEntity.get();
 
         // 3. 해당하는 item에 대한 comment가 맞는지 
@@ -106,11 +107,6 @@ public class CommentService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
         // 4. item 정보를 등록한 writer일 경우, 로직 실행
-        log.info("item writer= " + itemEntity.getWriter());
-        log.info("item password= " + itemEntity.getPassword());
-        log.info("comment writer= " + commentDto.getWriter());
-        log.info("comment password= " + commentDto.getPassword());
-
         if (itemEntity.getWriter().equals(commentDto.getWriter()) && itemEntity.getPassword().equals(commentDto.getPassword())) {
             commentEntity.setReply(commentDto.getReply());
 
@@ -128,10 +124,8 @@ public class CommentService {
         CommentEntity commentEntity = optionalCommentEntity.get();
 
         if (commentEntity.getWriter().equals(commentDto.getWriter()) && commentEntity.getPassword().equals(commentDto.getPassword())) {
-
             commentRepository.deleteById(id);
         } else throw new PasswordNotCorrectException();
-
     }
 
 }
