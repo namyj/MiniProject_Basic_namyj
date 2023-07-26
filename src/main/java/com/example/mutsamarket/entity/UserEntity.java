@@ -1,6 +1,7 @@
 package com.example.mutsamarket.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Entity
@@ -13,7 +14,7 @@ public class UserEntity {
 
     @Column(nullable = false, unique = true)
     private String username;
-    @Column(nullable = false)
+    @NotBlank
     private String password;
 
     private String email;
