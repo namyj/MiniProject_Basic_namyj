@@ -1,17 +1,14 @@
-package com.example.mutsamarket;
+package com.example.mutsamarket.controller;
 
+import com.example.mutsamarket.service.ItemService;
 import com.example.mutsamarket.dto.ItemDto;
 import com.example.mutsamarket.dto.ResponseDto;
-import com.example.mutsamarket.entity.ItemEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.cache.spi.support.AbstractReadWriteAccess;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Slf4j
 @RestController

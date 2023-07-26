@@ -1,5 +1,6 @@
-package com.example.mutsamarket;
+package com.example.mutsamarket.controller;
 
+import com.example.mutsamarket.service.OfferSerivce;
 import com.example.mutsamarket.dto.OfferDto;
 import com.example.mutsamarket.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;

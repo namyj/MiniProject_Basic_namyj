@@ -1,4 +1,4 @@
-package com.example.mutsamarket;
+package com.example.mutsamarket.repository;
 
 import com.example.mutsamarket.dto.CommentDto;
 import com.example.mutsamarket.entity.CommentEntity;

@@ -1,4 +1,4 @@
-package com.example.mutsamarket;
+package com.example.mutsamarket.repository;
 
 import com.example.mutsamarket.entity.OfferEntity;
 import org.springframework.data.domain.Page;

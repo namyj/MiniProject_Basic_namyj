@@ -1,6 +1,6 @@
-package com.example.mutsamarket;
+package com.example.mutsamarket.service;
 
-import com.example.mutsamarket.dto.CommentDto;
+import com.example.mutsamarket.repository.ItemRepository;
 import com.example.mutsamarket.dto.ItemDto;
 import com.example.mutsamarket.entity.ItemEntity;
 import com.example.mutsamarket.exceptions.ItemNotFoundException;
