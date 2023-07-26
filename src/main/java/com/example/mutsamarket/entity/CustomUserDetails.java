@@ -56,19 +56,19 @@ public class CustomUserDetails implements UserDetails {
     }
 
     public Long getId() {
-        return this.id;
+        return id;
     }
 
     public String getEmail() {
-        return this.email;
+        return email;
     }
 
     public String getPhone() {
-        return this.phone;
+        return phone;
     }
 
     public String getAddress() {
-        return this.address;
+        return address;
     }
 
     public static CustomUserDetails fromEntity(UserEntity entity) {

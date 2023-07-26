@@ -1,22 +1,41 @@
 package com.example.mutsamarket.controller;
 
-import com.example.mutsamarket.entity.CustomUserDetails;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import com.example.mutsamarket.entity.CustomUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Slf4j
 @Controller
 @RequestMapping("/users")
 public class UserController {
+    // 로그인
+    @GetMapping("/login")
+    public String loginForm() {
+        return "login-form";
+    }
 
+    @GetMapping("/my-profile")
+    public String myProfile(Authentication authentication) {
+        log.info("Login success!");
+
+        // 현재 로그인 한 사용자 정보 출력
+        log.info(authentication.getName());
+        log.info(((User) authentication.getPrincipal()).getUsername());
+        log.info(SecurityContextHolder.getContext().getAuthentication().getName());
+        return "my-profile";
+    }
+
+    // 회원가입
     private final UserDetailsManager userDetailsManager;
     private final PasswordEncoder passwordEncoder;
 
@@ -53,7 +72,7 @@ public class UserController {
                     .build();
 
             userDetailsManager.createUser(details);
-            return "redirect:/"; // test를 위해 우선 / 로 리다이렉트
+            return "redirect:/users/login";
         }
 
         log.warn("Password does not match...");
