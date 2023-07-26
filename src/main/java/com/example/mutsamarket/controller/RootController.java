@@ -8,7 +8,7 @@ public class RootController {
     // http://localhost:8080/
     @GetMapping
     public String root() {
-        return "hello";
+        return "Root End Point";
     }
 
     // http://localhost:8080/no-auth

@@ -19,9 +19,9 @@ public class WebSecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable) // 테스트를 위해 csrf disable 시킴
             .authorizeHttpRequests(
                     authHttp -> authHttp
-                            .requestMatchers("/no-auth").permitAll()
-                            .requestMatchers("/re-auth", "/users/my-profile").authenticated()
-                            .requestMatchers("/").anonymous()
+                            .requestMatchers("/no-auth", "/users/login").permitAll()
+                            .requestMatchers("/", "/users/register").anonymous()
+                            .anyRequest().authenticated()
             );
 
         http.formLogin(
@@ -36,13 +36,13 @@ public class WebSecurityConfig {
     }
 
     // 로그인 Test를 위해 UserDetailsManager에 테스트 사용자 저장
-    @Bean
-    public UserDetailsManager getUserDetailsManager(PasswordEncoder passwordEncoder) {
-        UserDetails testuser = User.withUsername("admin")
-                .password(passwordEncoder.encode("1234"))
-                .build();
-        return new InMemoryUserDetailsManager(testuser);
-    }
+    // @Bean
+    // public UserDetailsManager getUserDetailsManager(PasswordEncoder passwordEncoder) {
+    //     UserDetails testuser = User.withUsername("admin")
+    //             .password(passwordEncoder.encode("1234"))
+    //             .build();
+    //     return new InMemoryUserDetailsManager(testuser);
+    // }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
