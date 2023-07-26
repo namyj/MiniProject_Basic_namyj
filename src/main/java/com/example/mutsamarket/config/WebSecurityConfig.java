@@ -14,8 +14,8 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(
                         authHttp -> authHttp
                                 .requestMatchers("/no-auth").permitAll()
-                                .requestMatchers("/re-auth").authenticated()
-                                .requestMatchers("/").anonymous()
+                                .requestMatchers("/", "/users/register").anonymous()
+                                .anyRequest().authenticated()
                 );
 
         return http.build();

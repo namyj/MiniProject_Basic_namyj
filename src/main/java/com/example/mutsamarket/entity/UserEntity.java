@@ -1,7 +1,6 @@
 package com.example.mutsamarket.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "users")
