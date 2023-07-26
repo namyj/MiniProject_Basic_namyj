@@ -21,7 +21,6 @@ public class WebSecurityConfig {
                     authHttp -> authHttp
                             .requestMatchers("/no-auth", "/users/login").permitAll()
                             .requestMatchers("/", "/users/register").anonymous()
-                            // .requestMatchers("/re-auth", "/users/my-profile").authenticated()
                             .anyRequest().authenticated()
             );
 

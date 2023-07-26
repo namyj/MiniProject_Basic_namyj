@@ -29,9 +29,10 @@ public class UserController {
         log.info("Login success!");
 
         // 현재 로그인 한 사용자 정보 출력
-        log.info(authentication.getName());
-        log.info(((User) authentication.getPrincipal()).getUsername());
-        log.info(SecurityContextHolder.getContext().getAuthentication().getName());
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal(); // UserDetails 객체 반환
+
+        log.info(userDetails.getUsername());
+        log.info(userDetails.getEmail());
         return "my-profile";
     }
 
@@ -61,7 +62,12 @@ public class UserController {
             @RequestParam("phone") String phone,
             @RequestParam("address") String address
     ) {
-        if (password.equals(passwordCheck)) {
+        if (!password.equals(passwordCheck)) {
+            log.warn("Password does not match...");
+            return "redirect:/users/register?error";
+        }
+
+        try {
             log.info("Password match!");
             UserDetails details = CustomUserDetails.builder()
                     .username(username)
@@ -72,10 +78,12 @@ public class UserController {
                     .build();
 
             userDetailsManager.createUser(details);
+
             return "redirect:/users/login";
+        } catch (Exception e) {
+            log.error(e.toString());
+            return "redirect:/users/register?error";
         }
 
-        log.warn("Password does not match...");
-        return "redirect:/users/register?error";
     }
 }
