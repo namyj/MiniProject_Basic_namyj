@@ -47,8 +47,6 @@ public class JpaUserDetailsManager implements UserDetailsManager {
             log.error(e.toString());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-
     }
 
     @Override
