@@ -1,5 +1,6 @@
 package com.example.mutsamarket.controller;
 
+import com.example.mutsamarket.entity.CustomUserDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,7 +34,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public void registerPost(
+    public String registerPost(
             @RequestParam("username") String username,
             @RequestParam("password") String password,
             @RequestParam("password-check") String passwordCheck,
@@ -43,8 +44,19 @@ public class UserController {
     ) {
         if (password.equals(passwordCheck)) {
             log.info("Password match!");
+            UserDetails details = CustomUserDetails.builder()
+                    .username(username)
+                    .password(passwordEncoder.encode(password))
+                    .email(email)
+                    .phone(phone)
+                    .address(address)
+                    .build();
+
+            userDetailsManager.createUser(details);
+            return "redirect:/"; // test를 위해 우선 / 로 리다이렉트
         }
 
         log.warn("Password does not match...");
+        return "redirect:/users/register?error";
     }
 }

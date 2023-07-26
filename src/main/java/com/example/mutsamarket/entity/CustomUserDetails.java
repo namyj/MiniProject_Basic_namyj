@@ -3,7 +3,6 @@ package com.example.mutsamarket.entity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-import org.hibernate.tool.schema.extract.internal.SequenceNameExtractorImpl;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
