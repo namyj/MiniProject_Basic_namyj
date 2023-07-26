@@ -16,6 +16,7 @@ public class UserController {
 
     @GetMapping("/my-profile")
     public String myProfile() {
+        log.info("Login success!");
         return "my-profile";
     }
 }
