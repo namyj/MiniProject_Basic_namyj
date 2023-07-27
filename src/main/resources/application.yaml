@@ -23,3 +23,5 @@ spring:
     resources:
       static-locations: file:media/,classpath:/static
 
+jwt:
+  secret: cvklsdlfkweklsdlsdkljsdfnklvefrnkvsdflknsvcreljkvlnkfjklsdcklsadfberftcscv

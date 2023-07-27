@@ -8,6 +8,8 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 
@@ -38,7 +40,7 @@ public class WebSecurityConfig {
                             .requestMatchers("/", "/users/register").anonymous()
                             .anyRequest().authenticated()
             );
-        //     .formLogin(
+        // http.formLogin(
         //         formLogin -> formLogin
         //                 .loginPage("/users/login")
         //                 .defaultSuccessUrl("/users/my-profile")
