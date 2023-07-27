@@ -15,11 +15,6 @@ import org.springframework.security.provisioning.UserDetailsManager;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    // 로그인 form
-    // @GetMapping("/login")
-    // public String loginForm() {
-    //     return "login-form";
-    // }
 
     // 로그인 성공 시 token 발급 엔드 포인트
     @PostMapping("/login")
@@ -68,7 +63,6 @@ public class UserController {
             log.warn("Password does not match...");
             response.setMessage("회원가입에 실패했습니다.");
             return response;
-            // return "redirect:/users/register?error";
         }
 
         try {
