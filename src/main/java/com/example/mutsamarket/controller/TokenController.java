@@ -28,7 +28,7 @@ public class TokenController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // JWT 토큰 발급
+    // JWT 토큰 발급 (사용 X)
     @PostMapping("/issue")
     public JwtTokenDto issueJwt(@RequestBody JwtRequestDto dto) {
         UserDetails userDetails = userDetailsManager.loadUserByUsername(dto.getUsername());
