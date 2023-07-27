@@ -40,6 +40,7 @@ public class WebSecurityConfig {
                             .requestMatchers("/", "/users/register").anonymous()
                             .anyRequest().authenticated()
             );
+
         // http.formLogin(
         //         formLogin -> formLogin
         //                 .loginPage("/users/login")

@@ -1,5 +1,6 @@
 package com.example.mutsamarket.controller;
 
+import com.example.mutsamarket.dto.ResponseDto;
 import com.example.mutsamarket.jwt.JwtRequestDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -11,7 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 
 @Slf4j
-@Controller
+@RestController
 @RequestMapping("/users")
 public class UserController {
     // 로그인 form
@@ -52,23 +53,22 @@ public class UserController {
     }
 
     // 회원가입 form
-    // @GetMapping("/register")
-    // public String registerForm() {
-    //     return "register-form";
-    // }
-
     @PostMapping("/register")
-    public String registerPost(
+    public ResponseDto registerPost(
             @RequestParam("username") String username,
             @RequestParam("password") String password,
             @RequestParam("password-check") String passwordCheck,
-            @RequestParam("email") String email,
-            @RequestParam("phone") String phone,
-            @RequestParam("address") String address
+            @RequestParam(value = "email", required = false) String email,
+            @RequestParam(value = "phone", required = false) String phone,
+            @RequestParam(value = "address", required = false) String address
     ) {
+        ResponseDto response = new ResponseDto();
+
         if (!password.equals(passwordCheck)) {
             log.warn("Password does not match...");
-            return "redirect:/users/register?error";
+            response.setMessage("회원가입에 실패했습니다.");
+            return response;
+            // return "redirect:/users/register?error";
         }
 
         try {
@@ -83,10 +83,12 @@ public class UserController {
 
             userDetailsManager.createUser(details);
 
-            return "redirect:/users/login";
+            response.setMessage("회원가입에 성공했습니다");
+            return response;
         } catch (Exception e) {
             log.error(e.toString());
-            return "redirect:/users/register?error";
+            response.setMessage("회원가입에 실패했습니다.");
+            return response;
         }
 
     }
