@@ -20,29 +20,31 @@ public class WebSecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable) // 테스트를 위해 csrf disable 시킴
             .authorizeHttpRequests(
                     authHttp -> authHttp
-                            .requestMatchers("/no-auth", "/users/login").permitAll()
+                            .requestMatchers("/no-auth", "/users/login", "/token/issue").permitAll()
                             .requestMatchers("/", "/users/register").anonymous()
                             .anyRequest().authenticated()
             );
 
-        http.formLogin(
-                formLogin -> formLogin
-                        .loginPage("/users/login")
-                        .defaultSuccessUrl("/users/my-profile")
-                        .failureUrl("/users/login?fail")
-                        .permitAll()
-        );
-
         http.sessionManagement(
                 sessioManagement -> sessioManagement
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         );
 
-        http.logout(
-          logout -> logout
-                  .logoutUrl("/users/logout")
-                  .logoutSuccessUrl("/users/login")
-        );
+        // login-form.html을 이용한 로그인
+        // http.formLogin(
+        //         formLogin -> formLogin
+        //                 .loginPage("/users/login")
+        //                 .defaultSuccessUrl("/users/my-profile")
+        //                 .failureUrl("/users/login?fail")
+        //                 .permitAll()
+        // );
+
+
+        // http.logout(
+        //   logout -> logout
+        //           .logoutUrl("/users/logout")
+        //           .logoutSuccessUrl("/users/login")
+        // );
         return http.build();
     }
 

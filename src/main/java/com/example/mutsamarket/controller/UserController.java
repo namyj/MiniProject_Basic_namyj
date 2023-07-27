@@ -1,16 +1,14 @@
 package com.example.mutsamarket.controller;
 
+import com.example.mutsamarket.jwt.JwtRequestDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import com.example.mutsamarket.entity.CustomUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Slf4j
 @Controller
@@ -20,6 +18,14 @@ public class UserController {
     @GetMapping("/login")
     public String loginForm() {
         return "login-form";
+    }
+
+    // 로그인 성공 시 token 발급 엔드 포인트
+    @PostMapping("/login")
+    public String login(
+            @RequestBody JwtRequestDto requestDto
+    ) {
+        return null;
     }
 
     @GetMapping("/my-profile")
