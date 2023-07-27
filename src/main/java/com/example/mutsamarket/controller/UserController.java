@@ -1,25 +1,32 @@
 package com.example.mutsamarket.controller;
 
+import com.example.mutsamarket.dto.ResponseDto;
+import com.example.mutsamarket.jwt.JwtRequestDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import com.example.mutsamarket.entity.CustomUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Slf4j
-@Controller
+@RestController
 @RequestMapping("/users")
 public class UserController {
-    // 로그인
-    @GetMapping("/login")
-    public String loginForm() {
-        return "login-form";
+    // 로그인 form
+    // @GetMapping("/login")
+    // public String loginForm() {
+    //     return "login-form";
+    // }
+
+    // 로그인 성공 시 token 발급 엔드 포인트
+    @PostMapping("/login")
+    public String login(
+            @RequestBody JwtRequestDto requestDto
+    ) {
+        return null;
     }
 
     @GetMapping("/my-profile")
@@ -34,7 +41,6 @@ public class UserController {
         return "my-profile";
     }
 
-    // 회원가입
     private final UserDetailsManager userDetailsManager;
     private final PasswordEncoder passwordEncoder;
 
@@ -46,23 +52,23 @@ public class UserController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @GetMapping("/register")
-    public String registerForm() {
-        return "register-form";
-    }
-
+    // 회원가입 form
     @PostMapping("/register")
-    public String registerPost(
+    public ResponseDto registerPost(
             @RequestParam("username") String username,
             @RequestParam("password") String password,
             @RequestParam("password-check") String passwordCheck,
-            @RequestParam("email") String email,
-            @RequestParam("phone") String phone,
-            @RequestParam("address") String address
+            @RequestParam(value = "email", required = false) String email,
+            @RequestParam(value = "phone", required = false) String phone,
+            @RequestParam(value = "address", required = false) String address
     ) {
+        ResponseDto response = new ResponseDto();
+
         if (!password.equals(passwordCheck)) {
             log.warn("Password does not match...");
-            return "redirect:/users/register?error";
+            response.setMessage("회원가입에 실패했습니다.");
+            return response;
+            // return "redirect:/users/register?error";
         }
 
         try {
@@ -77,10 +83,12 @@ public class UserController {
 
             userDetailsManager.createUser(details);
 
-            return "redirect:/users/login";
+            response.setMessage("회원가입에 성공했습니다");
+            return response;
         } catch (Exception e) {
             log.error(e.toString());
-            return "redirect:/users/register?error";
+            response.setMessage("회원가입에 실패했습니다.");
+            return response;
         }
 
     }
