@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping("/users")
 public class UserController {
-    // 로그인
-    @GetMapping("/login")
-    public String loginForm() {
-        return "login-form";
-    }
+    // 로그인 form
+    // @GetMapping("/login")
+    // public String loginForm() {
+    //     return "login-form";
+    // }
 
     @GetMapping("/my-profile")
     public String myProfile(Authentication authentication) {
@@ -36,7 +36,6 @@ public class UserController {
         return "my-profile";
     }
 
-    // 회원가입
     private final UserDetailsManager userDetailsManager;
     private final PasswordEncoder passwordEncoder;
 
@@ -48,10 +47,11 @@ public class UserController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @GetMapping("/register")
-    public String registerForm() {
-        return "register-form";
-    }
+    // 회원가입 form
+    // @GetMapping("/register")
+    // public String registerForm() {
+    //     return "register-form";
+    // }
 
     @PostMapping("/register")
     public String registerPost(
