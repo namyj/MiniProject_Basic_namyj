@@ -14,8 +14,11 @@ public class CommentEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // @NotNull
+    // private Long itemId;
+    @ManyToOne
     @NotNull
-    private Long itemId;
+    private ItemEntity item;
 
     @NotBlank
     private String writer;
