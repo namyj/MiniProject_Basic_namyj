@@ -34,11 +34,17 @@ public class CommentService {
         if (optionalItemEntity.isEmpty())
             throw new ItemNotFoundException();
 
+        ItemEntity item = optionalItemEntity.get();
+
+        // 새로운 comment 생성
         CommentEntity newComment = new CommentEntity();
-        newComment.setItem(optionalItemEntity.get());
+        newComment.setItem(item);
         newComment.setWriter(commentDto.getWriter());
         newComment.setPassword(commentDto.getPassword());
         newComment.setContent(commentDto.getContent());
+
+        // item에 comment 추가
+        item.getComments().add(newComment);
 
         return CommentDto.fromEntity(commentRepository.save(newComment));
     }

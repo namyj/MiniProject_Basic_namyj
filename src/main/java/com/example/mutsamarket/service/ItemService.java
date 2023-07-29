@@ -1,5 +1,6 @@
 package com.example.mutsamarket.service;
 
+import com.example.mutsamarket.entity.CommentEntity;
 import com.example.mutsamarket.repository.ItemRepository;
 import com.example.mutsamarket.dto.ItemDto;
 import com.example.mutsamarket.entity.ItemEntity;
@@ -19,6 +20,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -32,12 +35,15 @@ public class ItemService {
     public ItemDto createItem(ItemDto itemDto) {
 
         ItemEntity newItem = new ItemEntity();
+        List<CommentEntity> comments = new ArrayList<>();
+
         newItem.setTitle(itemDto.getTitle());
         newItem.setDescription(itemDto.getDescription());
         newItem.setMinPriceWanted(itemDto.getMinPriceWanted());
         newItem.setWriter(itemDto.getWriter());
-        // newItem.setImageUrl(itemDto.getImageUrl()); // 필수 X
+        newItem.setImageUrl(itemDto.getImageUrl()); // 필수 X
         newItem.setPassword(itemDto.getPassword());
+        newItem.setComments(comments); // 빈 리스트 할당
         newItem.setStatus("판매중");
 
         return ItemDto.fromEntity(repository.save(newItem));
