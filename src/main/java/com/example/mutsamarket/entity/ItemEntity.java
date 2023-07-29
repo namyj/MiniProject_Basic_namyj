@@ -4,9 +4,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
+@ToString(exclude = {"comments", "offers"})
 @Data
 @Entity
 @Table(name = "items")
@@ -32,4 +34,7 @@ public class ItemEntity {
 
     @OneToMany(mappedBy = "item")
     private List<CommentEntity> comments;
+
+    @OneToMany(mappedBy = "item")
+    private List<OfferEntity> offers;
 }

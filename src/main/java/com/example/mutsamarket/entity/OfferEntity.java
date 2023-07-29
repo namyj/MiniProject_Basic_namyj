@@ -14,15 +14,15 @@ public class OfferEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
     @NotNull
-    private Long itemId;
+    private ItemEntity item;
 
     @NotNull
     private Integer suggestedPrice;
 
     @NotBlank
     private String writer;
-
     @NotBlank
     private String password;
 
