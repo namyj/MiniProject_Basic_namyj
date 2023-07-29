@@ -34,13 +34,17 @@ public class CommentService {
         if (optionalItemEntity.isEmpty())
             throw new ItemNotFoundException();
 
-        ItemEntity itemEntity = optionalItemEntity.get();
+        ItemEntity item = optionalItemEntity.get();
 
+        // 새로운 comment 생성
         CommentEntity newComment = new CommentEntity();
-        newComment.setItemId(itemEntity.getId());
+        newComment.setItem(item);
         newComment.setWriter(commentDto.getWriter());
         newComment.setPassword(commentDto.getPassword());
         newComment.setContent(commentDto.getContent());
+
+        // item에 comment 추가
+        item.getComments().add(newComment);
 
         return CommentDto.fromEntity(commentRepository.save(newComment));
     }
@@ -75,7 +79,7 @@ public class CommentService {
 
         CommentEntity commentEntity = optionalCommentEntity.get();
 
-        if (!itemId.equals(commentEntity.getItemId()))
+        if (!itemId.equals(commentEntity.getItem().getId()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
         if (commentEntity.getWriter().equals(commentDto.getWriter()) && commentEntity.getPassword().equals(commentDto.getPassword())) {
@@ -104,7 +108,7 @@ public class CommentService {
         CommentEntity commentEntity = optionalCommentEntity.get();
 
         // 3. 해당하는 item에 대한 comment가 맞는지 
-        if (!itemId.equals(commentEntity.getItemId()))
+        if (!itemId.equals(commentEntity.getItem().getId()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
         // 4. item 정보를 등록한 writer일 경우, 로직 실행

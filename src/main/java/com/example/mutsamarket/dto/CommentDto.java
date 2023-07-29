@@ -6,7 +6,6 @@ import lombok.Data;
 @Data
 public class CommentDto {
     private Long id;
-    private Long itemId;
     private String writer;
     private String password;
     private String content;
@@ -16,7 +15,6 @@ public class CommentDto {
         CommentDto commentDto = new CommentDto();
 
         commentDto.setId(commentEntity.getId());
-        commentDto.setItemId(commentEntity.getItemId());
         commentDto.setWriter(commentEntity.getWriter());
         commentDto.setPassword(commentEntity.getPassword());
         commentDto.setContent(commentEntity.getContent());
