@@ -34,16 +34,20 @@ public class OfferSerivce {
         if (optionalItemEntity.isEmpty())
             throw new ItemNotFoundException();
 
-        ItemEntity itemEntity = optionalItemEntity.get();
+        ItemEntity item = optionalItemEntity.get();
 
-        OfferEntity offerEntity = new OfferEntity();
-        offerEntity.setItemId(itemEntity.getId());
-        offerEntity.setWriter(offerDto.getWriter());
-        offerEntity.setPassword(offerDto.getPassword());
-        offerEntity.setSuggestedPrice(offerDto.getSuggestedPrice());
-        offerEntity.setStatus("제안");
+        // 새로운 offer 생성
+        OfferEntity newOffer = new OfferEntity();
+        newOffer.setItem(item);
+        newOffer.setWriter(offerDto.getWriter());
+        newOffer.setPassword(offerDto.getPassword());
+        newOffer.setSuggestedPrice(offerDto.getSuggestedPrice());
+        newOffer.setStatus("제안");
 
-        return OfferDto.fromEntity(offerRepository.save(offerEntity));
+        // item의 offer 리스트에 추가
+        item.getOffers().add(newOffer);
+
+        return OfferDto.fromEntity(offerRepository.save(newOffer));
     }
 
     public OfferDto readOffer(Long id) {
@@ -66,7 +70,7 @@ public class OfferSerivce {
         OfferEntity offerEntity = optionalOfferEntity.get();
         log.info(offerEntity.toString());
 
-        if (!itemId.equals(offerEntity.getItemId()))
+        if (!itemId.equals(offerEntity.getItem().getId()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
         if (offerEntity.getWriter().equals(offerDto.getWriter()) && offerEntity.getPassword().equals(offerDto.getPassword())) {
@@ -94,7 +98,7 @@ public class OfferSerivce {
         log.info(offerEntity.toString());
 
         // 3. item의 id와 offer의 itemId가 동일한지 확인
-        if (!itemId.equals(offerEntity.getItemId()))
+        if (!itemId.equals(offerEntity.getItem().getId()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         
         // 4. item의 writer, password인지 확인
@@ -123,7 +127,7 @@ public class OfferSerivce {
 
         ItemEntity itemEntity = optionalItemEntity.get();
         
-        if (!itemId.equals(targetOffer.getItemId()))
+        if (!itemId.equals(targetOffer.getItem().getId()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
         // 3-1. offer status 확인
@@ -155,17 +159,24 @@ public class OfferSerivce {
 
     public void deleteOffer(Long itemId, Long id, OfferDto offerDto) {
         Optional<OfferEntity> optionalOfferEntity = offerRepository.findById(id);
-
         if (optionalOfferEntity.isEmpty())
             throw new OfferNotFoundException();
 
-        OfferEntity offerEntity = optionalOfferEntity.get();
-        log.info(offerEntity.toString());
+        Optional<ItemEntity> optionalItemEntity = itemRepository.findById(itemId);
+        if (optionalItemEntity.isEmpty())
+            throw new ItemNotFoundException();
 
-        if (!itemId.equals(offerEntity.getItemId()))
+        OfferEntity offerEntity = optionalOfferEntity.get();
+        ItemEntity itemEntity = optionalItemEntity.get();
+
+        log.info(offerEntity.toString());
+        log.info(itemEntity.toString());
+
+        if (!itemEntity.getId().equals(offerEntity.getItem().getId()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
         if (offerEntity.getWriter().equals(offerDto.getWriter()) && offerEntity.getPassword().equals(offerDto.getPassword())) {
+            itemEntity.getOffers().remove(offerEntity);
             offerRepository.deleteById(id);
         } else throw new PasswordNotCorrectException();
     }

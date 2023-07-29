@@ -1,6 +1,7 @@
 package com.example.mutsamarket.service;
 
 import com.example.mutsamarket.entity.CommentEntity;
+import com.example.mutsamarket.entity.OfferEntity;
 import com.example.mutsamarket.repository.ItemRepository;
 import com.example.mutsamarket.dto.ItemDto;
 import com.example.mutsamarket.entity.ItemEntity;
@@ -35,7 +36,8 @@ public class ItemService {
     public ItemDto createItem(ItemDto itemDto) {
 
         ItemEntity newItem = new ItemEntity();
-        List<CommentEntity> comments = new ArrayList<>();
+        List<CommentEntity> commentList = new ArrayList<>();
+        List<OfferEntity> offerList = new ArrayList<>();
 
         newItem.setTitle(itemDto.getTitle());
         newItem.setDescription(itemDto.getDescription());
@@ -43,8 +45,10 @@ public class ItemService {
         newItem.setWriter(itemDto.getWriter());
         newItem.setImageUrl(itemDto.getImageUrl()); // 필수 X
         newItem.setPassword(itemDto.getPassword());
-        newItem.setComments(comments); // 빈 리스트 할당
         newItem.setStatus("판매중");
+
+        newItem.setComments(commentList); // 빈 리스트 할당
+        newItem.setOffers(offerList);
 
         return ItemDto.fromEntity(repository.save(newItem));
     }
