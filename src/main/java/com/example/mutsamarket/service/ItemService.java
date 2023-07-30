@@ -1,12 +1,12 @@
 package com.example.mutsamarket.service;
 
-import com.example.mutsamarket.entity.CommentEntity;
-import com.example.mutsamarket.entity.OfferEntity;
+import com.example.mutsamarket.entity.*;
+import com.example.mutsamarket.exceptions.UsernameNotFoundException;
 import com.example.mutsamarket.repository.ItemRepository;
 import com.example.mutsamarket.dto.ItemDto;
-import com.example.mutsamarket.entity.ItemEntity;
 import com.example.mutsamarket.exceptions.ItemNotFoundException;
 import com.example.mutsamarket.exceptions.PasswordNotCorrectException;
+import com.example.mutsamarket.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -14,6 +14,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -31,24 +34,36 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ItemService {
 
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     private final ItemRepository repository;
 
-    public ItemDto createItem(ItemDto itemDto) {
+    public ItemDto createItem(String username, String password, ItemDto itemDto) {
+        // 사용자 확인
+        Optional<UserEntity> optionalUser = userRepository.findByUsername(username);
+        if (optionalUser.isEmpty())
+            throw new UsernameNotFoundException();
 
+        UserEntity userEntity = optionalUser.get();
+
+        if (!passwordEncoder.matches(password, userEntity.getPassword()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+        // 새로운 item 생성
         ItemEntity newItem = new ItemEntity();
-        List<CommentEntity> commentList = new ArrayList<>();
-        List<OfferEntity> offerList = new ArrayList<>();
 
         newItem.setTitle(itemDto.getTitle());
         newItem.setDescription(itemDto.getDescription());
         newItem.setMinPriceWanted(itemDto.getMinPriceWanted());
-        newItem.setWriter(itemDto.getWriter());
         newItem.setImageUrl(itemDto.getImageUrl()); // 필수 X
-        newItem.setPassword(itemDto.getPassword());
         newItem.setStatus("판매중");
 
-        newItem.setComments(commentList); // 빈 리스트 할당
-        newItem.setOffers(offerList);
+        newItem.setUser(userEntity);
+        newItem.setComments(new ArrayList<CommentEntity>());
+        newItem.setOffers(new ArrayList<OfferEntity>());
+
+        // user의 item 리스트에 추가
+        userEntity.getItems().add(newItem);
 
         return ItemDto.fromEntity(repository.save(newItem));
     }
@@ -77,38 +92,37 @@ public class ItemService {
     }
 
 
-    public ItemDto updateItem(Long id, ItemDto itemDto) {
+    public ItemDto updateItem(Long id, String username, String password, ItemDto itemDto) {
         Optional<ItemEntity> optionalItemEntity = repository.findById(id);
-
         if (optionalItemEntity.isEmpty())
             throw new ItemNotFoundException();
 
         ItemEntity itemEntity = optionalItemEntity.get();
+        UserEntity userEntity = itemEntity.getUser();
 
-        if (itemEntity.getWriter().equals(itemDto.getWriter()) && itemEntity.getPassword().equals(itemDto.getPassword()) ) {
+        if (userEntity.getUsername().equals(username) && passwordEncoder.matches(password, userEntity.getPassword())) {
             itemEntity.setTitle(itemDto.getTitle());
             itemEntity.setDescription(itemDto.getDescription());
             itemEntity.setMinPriceWanted(itemDto.getMinPriceWanted());
-            itemEntity.setWriter(itemDto.getWriter());
 
             return ItemDto.fromEntity(repository.save(itemEntity));
         } else throw new PasswordNotCorrectException();
 
     }
 
-    public ItemDto updateItemImage(Long id, MultipartFile image, String writer, String password) {
+    public ItemDto updateItemImage(Long id, String username, String password, MultipartFile image) {
 
         Optional<ItemEntity> optionalItemEntity = repository.findById(id);
-
         if (optionalItemEntity.isEmpty())
             throw new ItemNotFoundException();
 
         ItemEntity itemEntity = optionalItemEntity.get();
+        UserEntity userEntity = itemEntity.getUser();
 
-        if (itemEntity.getWriter().equals(writer) && itemEntity.getPassword().equals(password) ) {
+        if (userEntity.getUsername().equals(username) && passwordEncoder.matches(password, userEntity.getPassword()) ) {
             // 1. 아이템 별 저장 폴더 생성
             String imageDir = String.format("media/%d/", id);
-            log.info("imageDir = " + imageDir);
+            // log.info("imageDir = " + imageDir);
             try {
                 Files.createDirectories(Path.of(imageDir));
             } catch (IOException e) {
@@ -121,11 +135,11 @@ public class ItemService {
             String[] filenameSplit = originalFilename.split("\\.");
             String extension = filenameSplit[filenameSplit.length -1];
             String imageFilename = "item." + extension;
-            log.info("imageFilename = " + imageFilename);
+            // log.info("imageFilename = " + imageFilename);
 
             // 3. 전체 경로 생성
             String imageFullPath = imageDir + imageFilename;
-            log.info("imageFullPath = " + imageFullPath);
+            log.info("Saving imageFullPath = " + imageFullPath);
 
             // 4. 이미지 저장
             try {
@@ -136,24 +150,22 @@ public class ItemService {
             }
 
             // 5. image 엔터티 업데이트
-            log.info(String.format("/static/%d/%s", id, imageFilename));
+            // log.info(String.format("/static/%d/%s", id, imageFilename));
             itemEntity.setImageUrl(String.format("/static/%d/%s", id, imageFilename));
             return ItemDto.fromEntity(repository.save(itemEntity));
 
         } else throw new PasswordNotCorrectException();
-
     }
 
-    public void deleteItem(Long id, ItemDto itemDto) {
+    public void deleteItem(Long id, String username, String password) {
         Optional<ItemEntity> optionalItemEntity = repository.findById(id);
-
         if (optionalItemEntity.isEmpty())
             throw new ItemNotFoundException();
 
         ItemEntity itemEntity = optionalItemEntity.get();
+        UserEntity userEntity = itemEntity.getUser();
 
-        if (itemEntity.getWriter().equals(itemDto.getWriter()) && itemEntity.getPassword().equals(itemDto.getPassword()) ) {
-
+        if (userEntity.getUsername().equals(username) && passwordEncoder.matches(password, userEntity.getPassword())) {
             repository.deleteById(id);
         } else throw new PasswordNotCorrectException();
     }

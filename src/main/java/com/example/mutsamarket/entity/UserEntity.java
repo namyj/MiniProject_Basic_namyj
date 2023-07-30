@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+import java.util.List;
+
 @Entity
 @Data
 @Table(name = "users")
@@ -20,4 +22,7 @@ public class UserEntity {
     private String email;
     private String phone;
     private String address;
+
+    @OneToMany(mappedBy = "user")
+    private List<ItemEntity> items;
 }

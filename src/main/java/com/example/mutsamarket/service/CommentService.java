@@ -112,7 +112,7 @@ public class CommentService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
         // 4. item 정보를 등록한 writer일 경우, 로직 실행
-        if (itemEntity.getWriter().equals(commentDto.getWriter()) && itemEntity.getPassword().equals(commentDto.getPassword())) {
+        if (itemEntity.getUser().getUsername().equals(commentDto.getWriter()) && itemEntity.getUser().getPassword().equals(commentDto.getPassword())) {
             commentEntity.setReply(commentDto.getReply());
 
             return CommentDto.fromEntity(commentRepository.save(commentEntity));

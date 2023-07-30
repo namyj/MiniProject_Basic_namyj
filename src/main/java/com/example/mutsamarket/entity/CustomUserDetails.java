@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Builder
@@ -89,6 +90,7 @@ public class CustomUserDetails implements UserDetails {
         entity.setEmail(email);
         entity.setPhone(phone);
         entity.setAddress(address);
+        entity.setItems(new ArrayList<ItemEntity>());
         return entity;
     }
 
