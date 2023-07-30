@@ -24,10 +24,6 @@ public class ItemEntity {
     private String description;
     @NotNull
     private Integer minPriceWanted;
-    @NotBlank
-    private String writer;
-    @NotBlank
-    private String password;
 
     private String imageUrl;
     private String status;
