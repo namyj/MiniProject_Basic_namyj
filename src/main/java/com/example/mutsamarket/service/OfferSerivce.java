@@ -103,7 +103,7 @@ public class OfferSerivce {
         
         // 4. item의 writer, password인지 확인
         // 5. 로직 실행
-        if (itemEntity.getWriter().equals(offerDto.getWriter()) && itemEntity.getPassword().equals(offerDto.getPassword())) {
+        if (itemEntity.getUser().getUsername().equals(offerDto.getWriter()) && itemEntity.getUser().getPassword().equals(offerDto.getPassword())) {
             offerEntity.setStatus(offerDto.getStatus());
             return OfferDto.fromEntity(offerRepository.save(offerEntity));
         } else throw new PasswordNotCorrectException();
@@ -197,8 +197,8 @@ public class OfferSerivce {
         ItemEntity itemEntity = optionalItemEntity.get();
 
         // 1. item writer의 경우
-        if (itemEntity.getWriter().equals(writer)) {
-            if (!itemEntity.getPassword().equals(password))
+        if (itemEntity.getUser().getUsername().equals(writer)) {
+            if (!itemEntity.getUser().getPassword().equals(password))
                 throw new PasswordNotCorrectException();
 
             Page<OfferEntity> offerEntityPage = offerRepository.findByItemId(itemId, pageable);

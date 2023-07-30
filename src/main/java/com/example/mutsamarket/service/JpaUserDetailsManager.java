@@ -25,9 +25,11 @@ public class JpaUserDetailsManager implements UserDetailsManager {
 
         // 로그인 테스트를 위해 테스트 사용자 생성
         createUser(CustomUserDetails.builder()
-                .username("admin")
+                .username("user")
                 .password(passwordEncoder.encode("1234"))
                 .email("test@email.com")
+                .phone("010-1234-1234")
+                .address("Seoul")
                 .build()
         );
     }
@@ -60,6 +62,7 @@ public class JpaUserDetailsManager implements UserDetailsManager {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<UserEntity> optionalUser = userRepository.findByUsername(username);
+
         if (optionalUser.isEmpty())
             throw new UsernameNotFoundException(username);
 
