@@ -28,6 +28,9 @@ public class ItemEntity {
     private String imageUrl;
     private String status;
 
+    @ManyToOne
+    private UserEntity user;
+
     @OneToMany(mappedBy = "item")
     private List<CommentEntity> comments;
 
