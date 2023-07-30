@@ -92,84 +92,81 @@ public class ItemService {
     }
 
 
-    // public ItemDto updateItem(Long id, ItemDto itemDto) {
-    //     Optional<ItemEntity> optionalItemEntity = repository.findById(id);
-    //
-    //     if (optionalItemEntity.isEmpty())
-    //         throw new ItemNotFoundException();
-    //
-    //     ItemEntity itemEntity = optionalItemEntity.get();
-    //
-    //     if (itemEntity.getWriter().equals(itemDto.getWriter()) && itemEntity.getPassword().equals(itemDto.getPassword()) ) {
-    //         itemEntity.setTitle(itemDto.getTitle());
-    //         itemEntity.setDescription(itemDto.getDescription());
-    //         itemEntity.setMinPriceWanted(itemDto.getMinPriceWanted());
-    //         itemEntity.setWriter(itemDto.getWriter());
-    //
-    //         return ItemDto.fromEntity(repository.save(itemEntity));
-    //     } else throw new PasswordNotCorrectException();
-    //
-    // }
-    //
-    // public ItemDto updateItemImage(Long id, MultipartFile image, String writer, String password) {
-    //
-    //     Optional<ItemEntity> optionalItemEntity = repository.findById(id);
-    //
-    //     if (optionalItemEntity.isEmpty())
-    //         throw new ItemNotFoundException();
-    //
-    //     ItemEntity itemEntity = optionalItemEntity.get();
-    //
-    //     if (itemEntity.getWriter().equals(writer) && itemEntity.getPassword().equals(password) ) {
-    //         // 1. 아이템 별 저장 폴더 생성
-    //         String imageDir = String.format("media/%d/", id);
-    //         log.info("imageDir = " + imageDir);
-    //         try {
-    //             Files.createDirectories(Path.of(imageDir));
-    //         } catch (IOException e) {
-    //             log.error(e.getMessage());
-    //             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-    //         }
-    //
-    //         // 2. 이미지 파일명 생성
-    //         String originalFilename = image.getOriginalFilename();
-    //         String[] filenameSplit = originalFilename.split("\\.");
-    //         String extension = filenameSplit[filenameSplit.length -1];
-    //         String imageFilename = "item." + extension;
-    //         log.info("imageFilename = " + imageFilename);
-    //
-    //         // 3. 전체 경로 생성
-    //         String imageFullPath = imageDir + imageFilename;
-    //         log.info("imageFullPath = " + imageFullPath);
-    //
-    //         // 4. 이미지 저장
-    //         try {
-    //             image.transferTo(Path.of(imageFullPath));
-    //         } catch (IOException e) {
-    //             log.error(e.getMessage());
-    //             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-    //         }
-    //
-    //         // 5. image 엔터티 업데이트
-    //         log.info(String.format("/static/%d/%s", id, imageFilename));
-    //         itemEntity.setImageUrl(String.format("/static/%d/%s", id, imageFilename));
-    //         return ItemDto.fromEntity(repository.save(itemEntity));
-    //
-    //     } else throw new PasswordNotCorrectException();
-    //
-    // }
-    //
-    // public void deleteItem(Long id, ItemDto itemDto) {
-    //     Optional<ItemEntity> optionalItemEntity = repository.findById(id);
-    //
-    //     if (optionalItemEntity.isEmpty())
-    //         throw new ItemNotFoundException();
-    //
-    //     ItemEntity itemEntity = optionalItemEntity.get();
-    //
-    //     if (itemEntity.getWriter().equals(itemDto.getWriter()) && itemEntity.getPassword().equals(itemDto.getPassword()) ) {
-    //
-    //         repository.deleteById(id);
-    //     } else throw new PasswordNotCorrectException();
-    // }
+    public ItemDto updateItem(Long id, String username, String password, ItemDto itemDto) {
+        Optional<ItemEntity> optionalItemEntity = repository.findById(id);
+        if (optionalItemEntity.isEmpty())
+            throw new ItemNotFoundException();
+
+        ItemEntity itemEntity = optionalItemEntity.get();
+        UserEntity userEntity = itemEntity.getUser();
+
+        if (userEntity.getUsername().equals(username) && passwordEncoder.matches(password, userEntity.getPassword())) {
+            itemEntity.setTitle(itemDto.getTitle());
+            itemEntity.setDescription(itemDto.getDescription());
+            itemEntity.setMinPriceWanted(itemDto.getMinPriceWanted());
+
+            return ItemDto.fromEntity(repository.save(itemEntity));
+        } else throw new PasswordNotCorrectException();
+
+    }
+
+    public ItemDto updateItemImage(Long id, String username, String password, MultipartFile image) {
+
+        Optional<ItemEntity> optionalItemEntity = repository.findById(id);
+        if (optionalItemEntity.isEmpty())
+            throw new ItemNotFoundException();
+
+        ItemEntity itemEntity = optionalItemEntity.get();
+        UserEntity userEntity = itemEntity.getUser();
+
+        if (userEntity.getUsername().equals(username) && passwordEncoder.matches(password, userEntity.getPassword()) ) {
+            // 1. 아이템 별 저장 폴더 생성
+            String imageDir = String.format("media/%d/", id);
+            // log.info("imageDir = " + imageDir);
+            try {
+                Files.createDirectories(Path.of(imageDir));
+            } catch (IOException e) {
+                log.error(e.getMessage());
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+            // 2. 이미지 파일명 생성
+            String originalFilename = image.getOriginalFilename();
+            String[] filenameSplit = originalFilename.split("\\.");
+            String extension = filenameSplit[filenameSplit.length -1];
+            String imageFilename = "item." + extension;
+            // log.info("imageFilename = " + imageFilename);
+
+            // 3. 전체 경로 생성
+            String imageFullPath = imageDir + imageFilename;
+            log.info("Saving imageFullPath = " + imageFullPath);
+
+            // 4. 이미지 저장
+            try {
+                image.transferTo(Path.of(imageFullPath));
+            } catch (IOException e) {
+                log.error(e.getMessage());
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+            // 5. image 엔터티 업데이트
+            // log.info(String.format("/static/%d/%s", id, imageFilename));
+            itemEntity.setImageUrl(String.format("/static/%d/%s", id, imageFilename));
+            return ItemDto.fromEntity(repository.save(itemEntity));
+
+        } else throw new PasswordNotCorrectException();
+    }
+
+    public void deleteItem(Long id, String username, String password) {
+        Optional<ItemEntity> optionalItemEntity = repository.findById(id);
+        if (optionalItemEntity.isEmpty())
+            throw new ItemNotFoundException();
+
+        ItemEntity itemEntity = optionalItemEntity.get();
+        UserEntity userEntity = itemEntity.getUser();
+
+        if (userEntity.getUsername().equals(username) && passwordEncoder.matches(password, userEntity.getPassword())) {
+            repository.deleteById(id);
+        } else throw new PasswordNotCorrectException();
+    }
 }
