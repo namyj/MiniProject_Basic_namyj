@@ -8,7 +8,7 @@ import lombok.ToString;
 
 import java.util.List;
 
-@ToString(exclude = {"comments", "offers"})
+@ToString(exclude = {"comments", "offers", "user"})
 @Data
 @Entity
 @Table(name = "items")

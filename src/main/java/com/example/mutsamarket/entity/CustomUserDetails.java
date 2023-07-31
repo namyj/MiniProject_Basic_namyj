@@ -91,6 +91,7 @@ public class CustomUserDetails implements UserDetails {
         entity.setPhone(phone);
         entity.setAddress(address);
         entity.setItems(new ArrayList<ItemEntity>());
+        entity.setComments(new ArrayList<CommentEntity>());
         return entity;
     }
 
