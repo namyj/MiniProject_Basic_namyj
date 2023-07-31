@@ -87,25 +87,25 @@ public class CommentService {
         CommentEntity commentEntity = optionalCommentEntity.get();
         return CommentDto.fromEntity(commentEntity);
     }
-    //
-    // public CommentDto updateComment(Long itemId, Long id, CommentDto commentDto) {
-    //     Optional<CommentEntity> optionalCommentEntity = commentRepository.findById(id);
-    //
-    //     if (optionalCommentEntity.isEmpty())
-    //         throw new CommentNotFoundException();
-    //
-    //     CommentEntity commentEntity = optionalCommentEntity.get();
-    //
-    //     if (!itemId.equals(commentEntity.getItem().getId()))
-    //         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-    //
-    //     if (commentEntity.getWriter().equals(commentDto.getWriter()) && commentEntity.getPassword().equals(commentDto.getPassword())) {
-    //         commentEntity.setContent(commentDto.getContent());
-    //
-    //         return CommentDto.fromEntity(commentRepository.save(commentEntity));
-    //     } else throw new PasswordNotCorrectException();
-    //
-    // }
+
+    public CommentDto updateComment(Long itemId, Long id, String username, String password, CommentDto commentDto) {
+        Optional<CommentEntity> optionalCommentEntity = commentRepository.findById(id);
+        if (optionalCommentEntity.isEmpty())
+            throw new CommentNotFoundException();
+
+        CommentEntity commentEntity = optionalCommentEntity.get();
+        UserEntity userEntity = commentEntity.getUser();
+
+        if (!itemId.equals(commentEntity.getItem().getId()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+        if (userEntity.getUsername().equals(username) && passwordEncoder.matches(password, userEntity.getPassword())) {
+            commentEntity.setContent(commentDto.getContent());
+
+            return CommentDto.fromEntity(commentRepository.save(commentEntity));
+        } else throw new PasswordNotCorrectException();
+
+    }
     //
     // public CommentDto updateCommentReply(Long itemId, Long id, CommentDto commentDto) {
     //     // 1. item 정보 조회

@@ -50,20 +50,22 @@ public class CommentController {
     ) {
         return service.readComment(id);
     }
-    //
-    // @PutMapping("/{commentId}")
-    // public ResponseDto update(
-    //         @PathVariable("itemId") Long itemId,
-    //         @PathVariable("commentId") Long id,
-    //         @RequestBody CommentDto commentDto
-    // ) {
-    //     service.updateComment(itemId, id, commentDto);
-    //
-    //     ResponseDto response = new ResponseDto();
-    //     response.setMessage("댓글이 수정되었습니다.");
-    //     return response;
-    // }
-    //
+
+    @PutMapping("/{commentId}")
+    public ResponseDto update(
+            @PathVariable("itemId") Long itemId,
+            @PathVariable("commentId") Long id,
+            @RequestParam("username") String username,
+            @RequestParam("password") String password,
+            @RequestBody CommentDto commentDto
+    ) {
+        service.updateComment(itemId, id, username, password, commentDto);
+
+        ResponseDto response = new ResponseDto();
+        response.setMessage("댓글이 수정되었습니다.");
+        return response;
+    }
+
     // @PutMapping("/{commentId}/reply")
     // public ResponseDto updateReply(
     //         @PathVariable("itemId") Long itemId,
