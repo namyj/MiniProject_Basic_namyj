@@ -99,7 +99,7 @@ public class CommentService {
         if (!itemId.equals(commentEntity.getItem().getId()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
-        if (userEntity.getUsername().equals(username) && passwordEncoder.matches(password, userEntity.getPassword())) {
+        if (username.equals(userEntity.getUsername()) && passwordEncoder.matches(password, userEntity.getPassword())) {
             commentEntity.setContent(commentDto.getContent());
 
             return CommentDto.fromEntity(commentRepository.save(commentEntity));
@@ -137,17 +137,20 @@ public class CommentService {
     //     } else throw new PasswordNotCorrectException();
     // }
     //
-    // public void deleteComment(Long itemId, Long id, CommentDto commentDto) {
-    //     Optional<CommentEntity> optionalCommentEntity = commentRepository.findById(id);
-    //
-    //     if (optionalCommentEntity.isEmpty())
-    //         throw new CommentNotFoundException();
-    //
-    //     CommentEntity commentEntity = optionalCommentEntity.get();
-    //
-    //     if (commentEntity.getWriter().equals(commentDto.getWriter()) && commentEntity.getPassword().equals(commentDto.getPassword())) {
-    //         commentRepository.deleteById(id);
-    //     } else throw new PasswordNotCorrectException();
-    // }
+    public void deleteComment(Long itemId, Long id, String username, String password) {
+        Optional<CommentEntity> optionalCommentEntity = commentRepository.findById(id);
+        if (optionalCommentEntity.isEmpty())
+            throw new CommentNotFoundException();
+
+        CommentEntity commentEntity = optionalCommentEntity.get();
+        UserEntity userEntity = commentEntity.getUser();
+
+        if (!itemId.equals(commentEntity.getItem().getId()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+        if (username.equals(userEntity.getUsername()) && passwordEncoder.matches(password, userEntity.getPassword())) {
+            commentRepository.deleteById(id);
+        } else throw new PasswordNotCorrectException();
+    }
 
 }

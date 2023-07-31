@@ -78,18 +78,19 @@ public class CommentController {
     //     response.setMessage("댓글에 답변이 추가되었습니다.");
     //     return response;
     // }
-    //
-    //
-    // @DeleteMapping("/{commentId}")
-    // public ResponseDto delete(
-    //         @PathVariable("itemId") Long itemId,
-    //         @PathVariable("commentId") Long id,
-    //         @RequestBody CommentDto commentDto
-    // ) {
-    //     service.deleteComment(itemId, id, commentDto);
-    //
-    //     ResponseDto response = new ResponseDto();
-    //     response.setMessage("댓글을 삭제했습니다.");
-    //     return response;
-    // }
+
+
+    @DeleteMapping("/{commentId}")
+    public ResponseDto delete(
+            @PathVariable("itemId") Long itemId,
+            @PathVariable("commentId") Long id,
+            @RequestParam("username") String username,
+            @RequestParam("password") String password
+    ) {
+        service.deleteComment(itemId, id, username, password);
+
+        ResponseDto response = new ResponseDto();
+        response.setMessage("댓글을 삭제했습니다.");
+        return response;
+    }
 }
