@@ -106,37 +106,34 @@ public class CommentService {
         } else throw new PasswordNotCorrectException();
 
     }
-    //
-    // public CommentDto updateCommentReply(Long itemId, Long id, CommentDto commentDto) {
-    //     // 1. item 정보 조회
-    //     Optional<ItemEntity> optionalItemEntity = itemRepository.findById(itemId);
-    //
-    //     if (optionalItemEntity.isEmpty())
-    //         throw new ItemNotFoundException();
-    //
-    //     ItemEntity itemEntity = optionalItemEntity.get();
-    //
-    //     // 2. Comment 정보 조회
-    //     Optional<CommentEntity> optionalCommentEntity = commentRepository.findById(id);
-    //
-    //     if (optionalCommentEntity.isEmpty())
-    //         throw new CommentNotFoundException();
-    //
-    //     CommentEntity commentEntity = optionalCommentEntity.get();
-    //
-    //     // 3. 해당하는 item에 대한 comment가 맞는지
-    //     if (!itemId.equals(commentEntity.getItem().getId()))
-    //         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-    //
-    //     // 4. item 정보를 등록한 writer일 경우, 로직 실행
-    //     if (itemEntity.getUser().getUsername().equals(commentDto.getWriter()) && itemEntity.getUser().getPassword().equals(commentDto.getPassword())) {
-    //         commentEntity.setReply(commentDto.getReply());
-    //
-    //         return CommentDto.fromEntity(commentRepository.save(commentEntity));
-    //
-    //     } else throw new PasswordNotCorrectException();
-    // }
-    //
+
+    public CommentDto updateCommentReply(Long itemId, Long id, String username, String password, CommentDto commentDto) {
+        // Comment 정보 조회
+        Optional<CommentEntity> optionalCommentEntity = commentRepository.findById(id);
+        if (optionalCommentEntity.isEmpty())
+            throw new CommentNotFoundException();
+
+        CommentEntity commentEntity = optionalCommentEntity.get();
+
+        // 해당하는 item에 대한 comment가 맞는지
+        if (!itemId.equals(commentEntity.getItem().getId()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+        // item 정보 조회
+        Optional<ItemEntity> optionalItemEntity = itemRepository.findById(itemId);
+        if (optionalItemEntity.isEmpty())
+            throw new ItemNotFoundException();
+
+        ItemEntity itemEntity = optionalItemEntity.get();
+        UserEntity itemUser = itemEntity.getUser();
+
+        // 4. item 정보를 등록한 user일 경우, 로직 실행
+        if (username.equals(itemUser.getUsername()) && passwordEncoder.matches(password, itemUser.getPassword())) {
+            commentEntity.setReply(commentDto.getReply());
+            return CommentDto.fromEntity(commentRepository.save(commentEntity));
+        } else throw new PasswordNotCorrectException();
+    }
+
     public void deleteComment(Long itemId, Long id, String username, String password) {
         Optional<CommentEntity> optionalCommentEntity = commentRepository.findById(id);
         if (optionalCommentEntity.isEmpty())
