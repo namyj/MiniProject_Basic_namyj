@@ -32,24 +32,24 @@ public class CommentController {
         return response;
     }
 
-    // @GetMapping
-    // public Page<CommentDto> readAll(
-    //         @PathVariable("itemId") Long itemId,
-    //         @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
-    //         @RequestParam(value = "limit", required = false) Integer limit
-    // ) {
-    //
-    //     log.info(("page = " + page));
-    //     log.info(("limit = " + limit));
-    //     return service.readComments(itemId, page, limit);
-    // }
-    //
-    // @GetMapping("/{commentId}")
-    // public CommentDto read(
-    //         @PathVariable("commentId") Long id
-    // ) {
-    //     return service.readComment(id);
-    // }
+    @GetMapping
+    public Page<CommentDto> readAll(
+            @PathVariable("itemId") Long itemId,
+            @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+            @RequestParam(value = "limit", required = false) Integer limit
+    ) {
+
+        log.info(("page = " + page));
+        log.info(("limit = " + limit));
+        return service.readComments(itemId, page, limit);
+    }
+
+    @GetMapping("/{commentId}")
+    public CommentDto read(
+            @PathVariable("commentId") Long id
+    ) {
+        return service.readComment(id);
+    }
     //
     // @PutMapping("/{commentId}")
     // public ResponseDto update(

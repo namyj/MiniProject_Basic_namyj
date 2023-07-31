@@ -66,27 +66,27 @@ public class CommentService {
         return CommentDto.fromEntity(commentRepository.save(newComment));
     }
 
-    // public Page<CommentDto> readComments(Long itemId, Integer page, Integer limit) {
-    //     if (page == null || limit == null) {
-    //         page = 0;
-    //         limit = commentRepository.findAllByItemId(itemId).toArray().length;
-    //     }
-    //
-    //     Pageable pageable = PageRequest.of(page, limit, Sort.by("id").ascending());
-    //     Page<CommentEntity> commentEntityPage = commentRepository.findAllByItemId(itemId, pageable);
-    //
-    //     return commentEntityPage.map(CommentDto::fromEntity);
-    // }
-    //
-    // public CommentDto readComment(Long id) {
-    //     Optional<CommentEntity> optionalCommentEntity = commentRepository.findById(id);
-    //
-    //     if (optionalCommentEntity.isEmpty())
-    //         throw new CommentNotFoundException();
-    //
-    //     CommentEntity commentEntity = optionalCommentEntity.get();
-    //     return CommentDto.fromEntity(commentEntity);
-    // }
+    public Page<CommentDto> readComments(Long itemId, Integer page, Integer limit) {
+        if (page == null || limit == null) {
+            page = 0;
+            limit = commentRepository.findAllByItemId(itemId).toArray().length;
+        }
+
+        Pageable pageable = PageRequest.of(page, limit, Sort.by("id").ascending());
+        Page<CommentEntity> commentEntityPage = commentRepository.findAllByItemId(itemId, pageable);
+
+        return commentEntityPage.map(CommentDto::fromEntity);
+    }
+
+    public CommentDto readComment(Long id) {
+        Optional<CommentEntity> optionalCommentEntity = commentRepository.findById(id);
+
+        if (optionalCommentEntity.isEmpty())
+            throw new CommentNotFoundException();
+
+        CommentEntity commentEntity = optionalCommentEntity.get();
+        return CommentDto.fromEntity(commentEntity);
+    }
     //
     // public CommentDto updateComment(Long itemId, Long id, CommentDto commentDto) {
     //     Optional<CommentEntity> optionalCommentEntity = commentRepository.findById(id);
