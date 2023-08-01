@@ -10,5 +10,5 @@ import java.util.List;
 public interface OfferRepository extends JpaRepository<OfferEntity, Long> {
     List<OfferEntity> findByItemId(Long itemId);
     Page<OfferEntity> findByItemId(Long itemId, Pageable pageable);
-    Page<OfferEntity> findByItemIdAndWriterAndPassword(Long itemId, String writer, String password, Pageable pageable);
+    // Page<OfferEntity> findByItemIdAndWriterAndPassword(Long itemId, String writer, String password, Pageable pageable);
 }
