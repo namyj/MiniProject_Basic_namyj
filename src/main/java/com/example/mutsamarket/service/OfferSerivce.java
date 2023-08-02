@@ -106,102 +106,102 @@ public class OfferSerivce {
         }
     }
 
-    // public OfferDto updateSuggestedPrice(Long itemId, Long id, OfferDto offerDto) {
-    //
-    //     Optional<OfferEntity> optionalOfferEntity = offerRepository.findById(id);
-    //
-    //     if (optionalOfferEntity.isEmpty())
-    //         throw new OfferNotFoundException();
-    //
-    //     OfferEntity offerEntity = optionalOfferEntity.get();
-    //     log.info(offerEntity.toString());
-    //
-    //     if (!itemId.equals(offerEntity.getItem().getId()))
-    //         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-    //
-    //     if (offerEntity.getWriter().equals(offerDto.getWriter()) && offerEntity.getPassword().equals(offerDto.getPassword())) {
-    //         offerEntity.setSuggestedPrice(offerDto.getSuggestedPrice());
-    //         return OfferDto.fromEntity(offerRepository.save(offerEntity));
-    //     } else throw new PasswordNotCorrectException();
-    // }
-    //
-    // public OfferDto updateStatus(Long itemId, Long id, OfferDto offerDto) {
-    //
-    //     // 1. item 조회
-    //     Optional<ItemEntity> optionalItemEntity = itemRepository.findById(itemId);
-    //     if (optionalItemEntity.isEmpty())
-    //         throw new ItemNotFoundException();
-    //
-    //     ItemEntity itemEntity = optionalItemEntity.get();
-    //     log.info(itemEntity.toString());
-    //
-    //     // 2. offer 조회
-    //     Optional<OfferEntity> optionalOfferEntity = offerRepository.findById(id);
-    //     if (optionalOfferEntity.isEmpty())
-    //         throw new OfferNotFoundException();
-    //
-    //     OfferEntity offerEntity = optionalOfferEntity.get();
-    //     log.info(offerEntity.toString());
-    //
-    //     // 3. item의 id와 offer의 itemId가 동일한지 확인
-    //     if (!itemId.equals(offerEntity.getItem().getId()))
-    //         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-    //
-    //     // 4. item의 writer, password인지 확인
-    //     // 5. 로직 실행
-    //     if (itemEntity.getUser().getUsername().equals(offerDto.getWriter()) && itemEntity.getUser().getPassword().equals(offerDto.getPassword())) {
-    //         offerEntity.setStatus(offerDto.getStatus());
-    //         return OfferDto.fromEntity(offerRepository.save(offerEntity));
-    //     } else throw new PasswordNotCorrectException();
-    // }
-    //
-    // public void updateConfirmedStatus(Long itemId, Long id, OfferDto offerDto) {
-    //     // 1. offer 조회
-    //     Optional<OfferEntity> optionalOfferEntity = offerRepository.findById(id);
-    //
-    //     if (optionalOfferEntity.isEmpty())
-    //         throw new OfferNotFoundException();
-    //
-    //     OfferEntity targetOffer = optionalOfferEntity.get();
-    //     log.info(targetOffer.toString());
-    //
-    //     // 2. item 조회
-    //     Optional<ItemEntity> optionalItemEntity = itemRepository.findById(itemId);
-    //
-    //     if (optionalItemEntity.isEmpty())
-    //         throw new ItemNotFoundException();
-    //
-    //     ItemEntity itemEntity = optionalItemEntity.get();
-    //
-    //     if (!itemId.equals(targetOffer.getItem().getId()))
-    //         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-    //
-    //     // 3-1. offer status 확인
-    //     if (!targetOffer.getStatus().equals("수락"))
-    //         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-    //
-    //     // 3-2. offer writer & password 확인
-    //     if (targetOffer.getWriter().equals(offerDto.getWriter()) && targetOffer.getPassword().equals(offerDto.getPassword())) {
-    //         // 4. offer status를 "확정"으로 변경
-    //         targetOffer.setStatus("확정");
-    //         offerRepository.save(targetOffer);
-    //
-    //         // 5. 나머지 offer status를 "거절"로 변경
-    //         List<OfferEntity> offerEntityList = offerRepository.findByItemId(itemId);
-    //
-    //         for (OfferEntity otherOffer : offerEntityList) {
-    //             if (otherOffer.getId().equals(id)) continue;
-    //
-    //             otherOffer.setStatus("거절");
-    //             offerRepository.save(otherOffer);
-    //         }
-    //
-    //         // 6. item의 status를 "판매 완료"로 변경
-    //         itemEntity.setStatus("판매 완료");
-    //         itemRepository.save(itemEntity);
-    //
-    //     } else throw new PasswordNotCorrectException();
-    // }
+    public OfferDto updateSuggestedPrice(Long itemId, Long id, String username, String password, OfferDto offerDto) {
+
+        Optional<OfferEntity> optionalOfferEntity = offerRepository.findById(id);
+        if (optionalOfferEntity.isEmpty())
+            throw new OfferNotFoundException();
+
+        OfferEntity offerEntity = optionalOfferEntity.get();
+        log.info(offerEntity.toString());
+
+        if (!itemId.equals(offerEntity.getItem().getId()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+        if (username.equals(offerEntity.getUser().getUsername()) && passwordEncoder.matches(password, offerEntity.getUser().getPassword())) {
+            offerEntity.setSuggestedPrice(offerDto.getSuggestedPrice());
+            return OfferDto.fromEntity(offerRepository.save(offerEntity));
+        } else throw new PasswordNotCorrectException();
+    }
+
+    // item 등록한 사용자가 제안을 수락|거절
+    public OfferDto updateStatus(Long itemId, Long id, String username, String password, OfferDto offerDto) {
+        // 1. offer 조회
+        Optional<OfferEntity> optionalOfferEntity = offerRepository.findById(id);
+        if (optionalOfferEntity.isEmpty())
+            throw new OfferNotFoundException();
+
+        OfferEntity offerEntity = optionalOfferEntity.get();
+        log.info(offerEntity.toString());
+
+        // 2. item의 id와 offer의 itemId가 동일한지 확인
+        if (!itemId.equals(offerEntity.getItem().getId()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+        // 3. item 조회
+        Optional<ItemEntity> optionalItemEntity = itemRepository.findById(itemId);
+        if (optionalItemEntity.isEmpty())
+            throw new ItemNotFoundException();
+
+        ItemEntity itemEntity = optionalItemEntity.get();
+        log.info(itemEntity.toString());
+
+        // 4. item의 writer, password인지 확인
+        // 5. 로직 실행
+        if (username.equals(itemEntity.getUser().getUsername()) && passwordEncoder.matches(password, itemEntity.getUser().getPassword())) {
+            if (!offerDto.getStatus().equals("수락") && !offerDto.getStatus().equals("거절"))
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+            offerEntity.setStatus(offerDto.getStatus());
+            return OfferDto.fromEntity(offerRepository.save(offerEntity));
+        } else throw new PasswordNotCorrectException();
+    }
+
+    public void updateConfirmedStatus(Long itemId, Long id, String username, String password, OfferDto offerDto) {
+        // 1. offer 조회
+        Optional<OfferEntity> optionalOfferEntity = offerRepository.findById(id);
+        if (optionalOfferEntity.isEmpty())
+            throw new OfferNotFoundException();
+
+        OfferEntity targetOffer = optionalOfferEntity.get();
+        log.info(targetOffer.toString());
+
+        if (!itemId.equals(targetOffer.getItem().getId()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+        // 2. item 조회
+        Optional<ItemEntity> optionalItemEntity = itemRepository.findById(itemId);
+        if (optionalItemEntity.isEmpty())
+            throw new ItemNotFoundException();
+
+        ItemEntity itemEntity = optionalItemEntity.get();
+
+        // 3-1. offer status 확인
+        if (!targetOffer.getStatus().equals("수락"))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+        // 3-2. offer writer & password 확인
+        if (username.equals(targetOffer.getUser().getUsername()) && passwordEncoder.matches(password, targetOffer.getUser().getPassword())) {
+            // 4. offer status를 "확정"으로 변경
+            targetOffer.setStatus("확정");
+            offerRepository.save(targetOffer);
+
+            // 5. 나머지 offer status를 "거절"로 변경
+            List<OfferEntity> offerEntityList = offerRepository.findByItemId(itemId);
+
+            for (OfferEntity otherOffer : offerEntityList) {
+                if (otherOffer.getId().equals(id)) continue;
+
+                otherOffer.setStatus("거절");
+                offerRepository.save(otherOffer);
+            }
+
+            // 6. item의 status를 "판매 완료"로 변경
+            itemEntity.setStatus("판매 완료");
+            itemRepository.save(itemEntity);
+
+        } else throw new PasswordNotCorrectException();
+    }
 
     public void deleteOffer(Long itemId, Long id, String username, String password) {
         // offer 확인

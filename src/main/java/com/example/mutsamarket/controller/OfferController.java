@@ -41,31 +41,33 @@ public class OfferController {
         return service.readOffers(itemId, username, password, page, limit);
     }
 
-    // @PutMapping("/{offerId}")
-    // public ResponseDto update(
-    //         @PathVariable("itemId") Long itemId,
-    //         @PathVariable("offerId") Long id,
-    //         @RequestBody OfferDto offerDto
-    // ) {
-    //     ResponseDto response = new ResponseDto();
-    //
-    //     if (offerDto.getSuggestedPrice() != null) {
-    //         service.updateSuggestedPrice(itemId, id, offerDto);
-    //         response.setMessage("제안이 수정되었습니다.");
-    //     }
-    //
-    //     if (offerDto.getStatus() != null) {
-    //         if (offerDto.getStatus().equals("확정")) {
-    //             service.updateConfirmedStatus(itemId, id, offerDto);
-    //             response.setMessage("구매가 확정되었습니다.");
-    //         } else {
-    //             service.updateStatus(itemId, id, offerDto);
-    //             response.setMessage("제안의 상태가 변경되었습니다.");
-    //         }
-    //     }
-    //
-    //     return response;
-    // }
+    @PutMapping("/{offerId}")
+    public ResponseDto update(
+            @PathVariable("itemId") Long itemId,
+            @PathVariable("offerId") Long id,
+            @RequestParam("username") String username,
+            @RequestParam("password") String password,
+            @RequestBody OfferDto offerDto
+    ) {
+        ResponseDto response = new ResponseDto();
+
+        if (offerDto.getSuggestedPrice() != null) {
+            service.updateSuggestedPrice(itemId, id, username, password, offerDto);
+            response.setMessage("제안이 수정되었습니다.");
+        }
+
+        if (offerDto.getStatus() != null) {
+            if (offerDto.getStatus().equals("확정")) {
+                service.updateConfirmedStatus(itemId, id, username, password, offerDto);
+                response.setMessage("구매가 확정되었습니다.");
+            } else {
+                service.updateStatus(itemId, id, username, password, offerDto);
+                response.setMessage("제안의 상태가 변경되었습니다.");
+            }
+        }
+
+        return response;
+    }
 
     @DeleteMapping("/{offerId}")
     public ResponseDto delete(
