@@ -21,6 +21,7 @@ public class CommentEntity {
     private ItemEntity item;
 
     @ManyToOne
+    @NotNull
     private UserEntity user;
 
     @NotBlank

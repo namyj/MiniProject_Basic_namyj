@@ -47,7 +47,7 @@ public class ItemService {
         UserEntity userEntity = optionalUser.get();
 
         if (!passwordEncoder.matches(password, userEntity.getPassword()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
         // 새로운 item 생성
         ItemEntity newItem = new ItemEntity();
@@ -78,7 +78,6 @@ public class ItemService {
     }
 
     public Page<ItemDto> readItems(Integer page, Integer limit) {
-
         if (page == null || limit == null) {
             page = 0;
             limit = repository.findAll().toArray().length;
@@ -106,7 +105,7 @@ public class ItemService {
             itemEntity.setMinPriceWanted(itemDto.getMinPriceWanted());
 
             return ItemDto.fromEntity(repository.save(itemEntity));
-        } else throw new PasswordNotCorrectException();
+        } else throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
     }
 
@@ -122,7 +121,6 @@ public class ItemService {
         if (userEntity.getUsername().equals(username) && passwordEncoder.matches(password, userEntity.getPassword()) ) {
             // 1. 아이템 별 저장 폴더 생성
             String imageDir = String.format("media/%d/", id);
-            // log.info("imageDir = " + imageDir);
             try {
                 Files.createDirectories(Path.of(imageDir));
             } catch (IOException e) {
@@ -135,7 +133,6 @@ public class ItemService {
             String[] filenameSplit = originalFilename.split("\\.");
             String extension = filenameSplit[filenameSplit.length -1];
             String imageFilename = "item." + extension;
-            // log.info("imageFilename = " + imageFilename);
 
             // 3. 전체 경로 생성
             String imageFullPath = imageDir + imageFilename;
@@ -150,11 +147,10 @@ public class ItemService {
             }
 
             // 5. image 엔터티 업데이트
-            // log.info(String.format("/static/%d/%s", id, imageFilename));
             itemEntity.setImageUrl(String.format("/static/%d/%s", id, imageFilename));
             return ItemDto.fromEntity(repository.save(itemEntity));
 
-        } else throw new PasswordNotCorrectException();
+        } else throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
     }
 
     public void deleteItem(Long id, String username, String password) {
@@ -167,6 +163,6 @@ public class ItemService {
 
         if (userEntity.getUsername().equals(username) && passwordEncoder.matches(password, userEntity.getPassword())) {
             repository.deleteById(id);
-        } else throw new PasswordNotCorrectException();
+        } else throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
     }
 }

@@ -12,8 +12,6 @@ import lombok.Data;
 public class OfferDto {
     private Long id;
     private Integer suggestedPrice;
-    private String writer;
-    private String password;
     private String status;
 
     public static OfferDto fromEntity(OfferEntity offerEntity) {
@@ -21,8 +19,6 @@ public class OfferDto {
 
         offerDto.setId(offerEntity.getId());
         offerDto.setSuggestedPrice(offerEntity.getSuggestedPrice());
-        offerDto.setWriter(offerEntity.getWriter());
-        offerDto.setPassword(offerEntity.getPassword());
         offerDto.setStatus(offerEntity.getStatus());
 
         return offerDto;

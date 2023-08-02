@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.ToString;
 
+@ToString(exclude = {"user"})
 @Data
 @Entity
 @Table(name = "offers")
@@ -18,14 +20,11 @@ public class OfferEntity {
     @NotNull
     private ItemEntity item;
 
+    @ManyToOne
+    @NotNull
+    private UserEntity user;
+
     @NotNull
     private Integer suggestedPrice;
-
-    @NotBlank
-    private String writer;
-    @NotBlank
-    private String password;
-
     private String status;
-
 }

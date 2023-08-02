@@ -29,6 +29,7 @@ public class ItemEntity {
     private String status;
 
     @ManyToOne
+    @NotNull
     private UserEntity user;
 
     @OneToMany(mappedBy = "item")
