@@ -69,16 +69,42 @@ public class OfferSerivce {
         return OfferDto.fromEntity(offerRepository.save(newOffer));
     }
 
-    // public OfferDto readOffer(Long id) {
-    //     Optional<OfferEntity> optionalOfferEntity = offerRepository.findById(id);
-    //
-    //     if (optionalOfferEntity.isEmpty())
-    //         throw new OfferNotFoundException();
-    //
-    //     OfferEntity offerEntity = optionalOfferEntity.get();
-    //     return OfferDto.fromEntity(offerEntity);
-    // }
-    //
+    public Page<OfferDto> readOffers(Long itemId, String username, String password, Integer page, Integer limit) {
+        if (limit == null) {
+            limit = offerRepository.findByItemId(itemId).toArray().length;
+        }
+        Pageable pageable = PageRequest.of(page, limit, Sort.by("id").ascending());
+
+        Optional<ItemEntity> optionalItemEntity = itemRepository.findById(itemId);
+        if (optionalItemEntity.isEmpty())
+            throw new ItemNotFoundException();
+
+        ItemEntity itemEntity = optionalItemEntity.get();
+
+        // 1. item writer의 경우
+        if (username.equals(itemEntity.getUser().getUsername())) {
+            if (!passwordEncoder.matches(password, itemEntity.getUser().getPassword()))
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+
+            Page<OfferEntity> offerEntityPage = offerRepository.findByItemId(itemId, pageable);
+            return offerEntityPage.map(OfferDto::fromEntity);
+        } else {
+            // 2. Offer writer의 경우
+            Optional<UserEntity> optionalUser = userRepository.findByUsername(username);
+            if (optionalUser.isEmpty())
+                throw new UsernameNotFoundException();
+
+            UserEntity userEntity = optionalUser.get();
+
+            if (!passwordEncoder.matches(password, userEntity.getPassword()))
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+
+            Page<OfferEntity> offerEntityPage = offerRepository.findByItemIdAndUser(itemId, userEntity, pageable);
+
+            return offerEntityPage.map(OfferDto::fromEntity);
+        }
+    }
+
     // public OfferDto updateSuggestedPrice(Long itemId, Long id, OfferDto offerDto) {
     //
     //     Optional<OfferEntity> optionalOfferEntity = offerRepository.findById(id);
@@ -199,35 +225,5 @@ public class OfferSerivce {
     //         offerRepository.deleteById(id);
     //     } else throw new PasswordNotCorrectException();
     // }
-    //
-    // public Page<OfferDto> readOffers(Long itemId, Integer page, Integer limit, String writer, String password) {
-    //
-    //     if (limit == null) {
-    //         limit = offerRepository.findByItemId(itemId).toArray().length;
-    //     }
-    //
-    //     Pageable pageable = PageRequest.of(page, limit, Sort.by("id").ascending());
-    //
-    //     Optional<ItemEntity> optionalItemEntity = itemRepository.findById(itemId);
-    //
-    //     if (optionalItemEntity.isEmpty())
-    //         throw new ItemNotFoundException();
-    //
-    //     ItemEntity itemEntity = optionalItemEntity.get();
-    //
-    //     // 1. item writer의 경우
-    //     if (itemEntity.getUser().getUsername().equals(writer)) {
-    //         if (!itemEntity.getUser().getPassword().equals(password))
-    //             throw new PasswordNotCorrectException();
-    //
-    //         Page<OfferEntity> offerEntityPage = offerRepository.findByItemId(itemId, pageable);
-    //
-    //         return offerEntityPage.map(OfferDto::fromEntity);
-    //     } else {
-    //         // 2. Offer writer의 경우
-    //         Page<OfferEntity> offerEntityPage = offerRepository.findByItemIdAndWriterAndPassword(itemId, writer, password, pageable);
-    //
-    //         return offerEntityPage.map(OfferDto::fromEntity);
-    //     }
-    // }
+
 }

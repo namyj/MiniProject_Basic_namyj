@@ -78,7 +78,6 @@ public class ItemService {
     }
 
     public Page<ItemDto> readItems(Integer page, Integer limit) {
-
         if (page == null || limit == null) {
             page = 0;
             limit = repository.findAll().toArray().length;

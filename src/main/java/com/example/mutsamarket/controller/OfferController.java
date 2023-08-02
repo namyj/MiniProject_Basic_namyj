@@ -30,24 +30,17 @@ public class OfferController {
         return response;
     }
 
-    // @GetMapping("/{offerId}")
-    // public OfferDto read(
-    //         @PathVariable("offerId") Long id
-    // ) {
-    //     return service.readOffer(id);
-    // }
-    //
-    // @GetMapping
-    // public Page<OfferDto> readAll(
-    //         @PathVariable("itemId") Long itemId,
-    //         @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
-    //         @RequestParam(value = "limit", required = false) Integer limit,
-    //         @RequestParam(value = "writer") String writer,
-    //         @RequestParam(value = "password") String password
-    // ) {
-    //     return service.readOffers(itemId, page, limit, writer, password);
-    // }
-    //
+    @GetMapping
+    public Page<OfferDto> readAll(
+            @PathVariable("itemId") Long itemId,
+            @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+            @RequestParam(value = "limit", required = false) Integer limit,
+            @RequestParam("username") String username,
+            @RequestParam("password") String password
+    ) {
+        return service.readOffers(itemId, username, password, page, limit);
+    }
+
     // @PutMapping("/{offerId}")
     // public ResponseDto update(
     //         @PathVariable("itemId") Long itemId,
