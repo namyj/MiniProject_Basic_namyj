@@ -11,20 +11,14 @@ import lombok.Data;
 @Data
 public class OfferDto {
     private Long id;
-    private Long itemId;
     private Integer suggestedPrice;
-    private String writer;
-    private String password;
     private String status;
 
     public static OfferDto fromEntity(OfferEntity offerEntity) {
         OfferDto offerDto = new OfferDto();
 
         offerDto.setId(offerEntity.getId());
-        offerDto.setItemId(offerEntity.getItemId());
         offerDto.setSuggestedPrice(offerEntity.getSuggestedPrice());
-        offerDto.setWriter(offerEntity.getWriter());
-        offerDto.setPassword(offerEntity.getPassword());
         offerDto.setStatus(offerEntity.getStatus());
 
         return offerDto;

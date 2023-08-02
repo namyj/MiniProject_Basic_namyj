@@ -10,8 +10,6 @@ public class ItemDto {
     private String description;
     private String imageUrl;
     private Integer minPriceWanted;
-    private String writer;
-    private String password;
     private String status;
 
     public static ItemDto fromEntity(ItemEntity itemEntity) {
@@ -22,8 +20,6 @@ public class ItemDto {
         itemDto.setDescription(itemEntity.getDescription());
         itemDto.setImageUrl(itemEntity.getImageUrl());
         itemDto.setMinPriceWanted(itemEntity.getMinPriceWanted());
-        itemDto.setWriter(itemEntity.getWriter());
-        itemDto.setPassword(itemEntity.getPassword());
         itemDto.setStatus(itemEntity.getStatus());
 
         return itemDto;

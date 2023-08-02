@@ -21,9 +21,11 @@ public class ItemController {
     // POST /items
     @PostMapping
     public ResponseDto create(
+            @RequestParam("username") String username,
+            @RequestParam("password") String password,
             @RequestBody ItemDto itemDto
     ) {
-        service.createItem(itemDto);
+        service.createItem(username, password, itemDto);
 
         ResponseDto response = new ResponseDto();
         response.setMessage("등록이 완료되었습니다.");
@@ -54,10 +56,12 @@ public class ItemController {
     @PutMapping("/{itemId}")
     public ResponseDto update(
             @PathVariable("itemId") Long id,
+            @RequestParam("username") String username,
+            @RequestParam("password") String password,
             @RequestBody ItemDto itemDto
     ) {
 
-        service.updateItem(id, itemDto);
+        service.updateItem(id, username, password, itemDto);
 
         ResponseDto response = new ResponseDto();
         response.setMessage("물품이 수정되었습니다.");
@@ -72,14 +76,11 @@ public class ItemController {
     public ResponseDto updateImage(
             @PathVariable("itemId") Long id,
             @RequestParam("image") MultipartFile multipartFile,
-            @RequestParam("writer") String  writer,
+            @RequestParam("username") String username,
             @RequestParam("password") String password
     ) {
 
-        log.info("writer = " + writer);
-        log.info("password = " + password);
-
-        service.updateItemImage(id, multipartFile, writer, password);
+        service.updateItemImage(id, username, password, multipartFile);
 
         ResponseDto response = new ResponseDto();
         response.setMessage("이미지가 등록되었습니다.");
@@ -89,9 +90,10 @@ public class ItemController {
     @DeleteMapping("/{itemId}")
     public ResponseDto delete(
             @PathVariable("itemId") Long id,
-            @RequestBody ItemDto itemDto
+            @RequestParam("username") String username,
+            @RequestParam("password") String password
     ) {
-        service.deleteItem(id, itemDto);
+        service.deleteItem(id, username, password);
 
         ResponseDto response = new ResponseDto();
         response.setMessage("물품을 삭제했습니다.");

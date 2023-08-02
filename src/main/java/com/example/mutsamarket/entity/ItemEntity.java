@@ -4,7 +4,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.ToString;
 
+import java.util.List;
+
+@ToString(exclude = {"comments", "offers", "user"})
 @Data
 @Entity
 @Table(name = "items")
@@ -20,11 +24,17 @@ public class ItemEntity {
     private String description;
     @NotNull
     private Integer minPriceWanted;
-    @NotBlank
-    private String writer;
-    @NotBlank
-    private String password;
 
     private String imageUrl;
     private String status;
+
+    @ManyToOne
+    @NotNull
+    private UserEntity user;
+
+    @OneToMany(mappedBy = "item")
+    private List<CommentEntity> comments;
+
+    @OneToMany(mappedBy = "item")
+    private List<OfferEntity> offers;
 }

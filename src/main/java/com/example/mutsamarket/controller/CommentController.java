@@ -20,9 +20,11 @@ public class CommentController {
     @PostMapping
     public ResponseDto create(
             @PathVariable("itemId") Long itemId,
+            @RequestParam("username") String username,
+            @RequestParam("password") String password,
             @RequestBody CommentDto commentDto
     ) {
-        CommentDto newComment = service.createComment(itemId, commentDto);
+        CommentDto newComment = service.createComment(itemId, username, password, commentDto);
         log.info(newComment.toString());
 
         ResponseDto response = new ResponseDto();
@@ -53,9 +55,11 @@ public class CommentController {
     public ResponseDto update(
             @PathVariable("itemId") Long itemId,
             @PathVariable("commentId") Long id,
+            @RequestParam("username") String username,
+            @RequestParam("password") String password,
             @RequestBody CommentDto commentDto
     ) {
-        service.updateComment(itemId, id, commentDto);
+        service.updateComment(itemId, id, username, password, commentDto);
 
         ResponseDto response = new ResponseDto();
         response.setMessage("댓글이 수정되었습니다.");
@@ -66,23 +70,25 @@ public class CommentController {
     public ResponseDto updateReply(
             @PathVariable("itemId") Long itemId,
             @PathVariable("commentId") Long id,
+            @RequestParam("username") String username,
+            @RequestParam("password") String password,
             @RequestBody CommentDto commentDto
     ) {
-        service.updateCommentReply(itemId, id, commentDto);
+        service.updateCommentReply(itemId, id, username, password, commentDto);
 
         ResponseDto response = new ResponseDto();
         response.setMessage("댓글에 답변이 추가되었습니다.");
         return response;
     }
 
-
     @DeleteMapping("/{commentId}")
     public ResponseDto delete(
             @PathVariable("itemId") Long itemId,
             @PathVariable("commentId") Long id,
-            @RequestBody CommentDto commentDto
+            @RequestParam("username") String username,
+            @RequestParam("password") String password
     ) {
-        service.deleteComment(itemId, id, commentDto);
+        service.deleteComment(itemId, id, username, password);
 
         ResponseDto response = new ResponseDto();
         response.setMessage("댓글을 삭제했습니다.");

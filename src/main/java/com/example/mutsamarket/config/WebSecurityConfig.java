@@ -38,8 +38,9 @@ public class WebSecurityConfig {
                     authHttp -> authHttp
                             .requestMatchers("/no-auth", "/users/login").permitAll()
                             .requestMatchers("/", "/users/register").anonymous()
-                            .anyRequest().authenticated()
-            );
+                            // .anyRequest().authenticated()
+                            .anyRequest().permitAll() // relation 테스트 용
+        );
 
         return http.build();
     }

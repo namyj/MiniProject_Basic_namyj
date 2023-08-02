@@ -19,20 +19,15 @@ public class OfferController {
     @PostMapping
     public ResponseDto creat(
             @PathVariable("itemId") Long itemId,
+            @RequestParam("username") String username,
+            @RequestParam("password") String password,
             @RequestBody OfferDto offerDto
     ) {
-        service.creatOffer(itemId, offerDto);
+        service.creatOffer(itemId, username, password, offerDto);
 
         ResponseDto response = new ResponseDto();
         response.setMessage("구매 제안이 등록되었습니다.");
         return response;
-    }
-
-    @GetMapping("/{offerId}")
-    public OfferDto read(
-            @PathVariable("offerId") Long id
-    ) {
-        return service.readOffer(id);
     }
 
     @GetMapping
@@ -40,31 +35,33 @@ public class OfferController {
             @PathVariable("itemId") Long itemId,
             @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
             @RequestParam(value = "limit", required = false) Integer limit,
-            @RequestParam(value = "writer") String writer,
-            @RequestParam(value = "password") String password
+            @RequestParam("username") String username,
+            @RequestParam("password") String password
     ) {
-        return service.readOffers(itemId, page, limit, writer, password);
+        return service.readOffers(itemId, username, password, page, limit);
     }
 
     @PutMapping("/{offerId}")
     public ResponseDto update(
             @PathVariable("itemId") Long itemId,
             @PathVariable("offerId") Long id,
+            @RequestParam("username") String username,
+            @RequestParam("password") String password,
             @RequestBody OfferDto offerDto
     ) {
         ResponseDto response = new ResponseDto();
 
         if (offerDto.getSuggestedPrice() != null) {
-            service.updateSuggestedPrice(itemId, id, offerDto);
+            service.updateSuggestedPrice(itemId, id, username, password, offerDto);
             response.setMessage("제안이 수정되었습니다.");
         }
 
         if (offerDto.getStatus() != null) {
             if (offerDto.getStatus().equals("확정")) {
-                service.updateConfirmedStatus(itemId, id, offerDto);
+                service.updateConfirmedStatus(itemId, id, username, password, offerDto);
                 response.setMessage("구매가 확정되었습니다.");
             } else {
-                service.updateStatus(itemId, id, offerDto);
+                service.updateStatus(itemId, id, username, password, offerDto);
                 response.setMessage("제안의 상태가 변경되었습니다.");
             }
         }
@@ -76,17 +73,14 @@ public class OfferController {
     public ResponseDto delete(
             @PathVariable("itemId") Long itemId,
             @PathVariable("offerId") Long id,
-            @RequestBody OfferDto offerDto
+            @RequestParam("username") String username,
+            @RequestParam("password") String password
     ) {
-        service.deleteOffer(itemId, id, offerDto);
+        service.deleteOffer(itemId, id, username, password);
 
         ResponseDto response = new ResponseDto();
         response.setMessage("제안을 삭제했습니다.");
         return response;
     }
-
-
-
-
 
 }
