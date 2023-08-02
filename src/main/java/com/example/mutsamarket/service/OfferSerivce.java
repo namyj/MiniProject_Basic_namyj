@@ -14,6 +14,7 @@ import com.example.mutsamarket.repository.UserRepository;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.cache.spi.support.AbstractReadWriteAccess;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -201,29 +202,27 @@ public class OfferSerivce {
     //
     //     } else throw new PasswordNotCorrectException();
     // }
-    //
-    // public void deleteOffer(Long itemId, Long id, OfferDto offerDto) {
-    //     Optional<OfferEntity> optionalOfferEntity = offerRepository.findById(id);
-    //     if (optionalOfferEntity.isEmpty())
-    //         throw new OfferNotFoundException();
-    //
-    //     Optional<ItemEntity> optionalItemEntity = itemRepository.findById(itemId);
-    //     if (optionalItemEntity.isEmpty())
-    //         throw new ItemNotFoundException();
-    //
-    //     OfferEntity offerEntity = optionalOfferEntity.get();
-    //     ItemEntity itemEntity = optionalItemEntity.get();
-    //
-    //     log.info(offerEntity.toString());
-    //     log.info(itemEntity.toString());
-    //
-    //     if (!itemEntity.getId().equals(offerEntity.getItem().getId()))
-    //         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-    //
-    //     if (offerEntity.getWriter().equals(offerDto.getWriter()) && offerEntity.getPassword().equals(offerDto.getPassword())) {
-    //         itemEntity.getOffers().remove(offerEntity);
-    //         offerRepository.deleteById(id);
-    //     } else throw new PasswordNotCorrectException();
-    // }
+
+    public void deleteOffer(Long itemId, Long id, String username, String password) {
+        // offer 확인
+        Optional<OfferEntity> optionalOfferEntity = offerRepository.findById(id);
+        if (optionalOfferEntity.isEmpty())
+            throw new OfferNotFoundException();
+
+        OfferEntity offerEntity = optionalOfferEntity.get();
+
+        if (!itemId.equals(offerEntity.getItem().getId()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+
+        Optional<ItemEntity> optionalItemEntity = itemRepository.findById(itemId);
+        if (optionalItemEntity.isEmpty())
+            throw new ItemNotFoundException();
+        ItemEntity itemEntity = optionalItemEntity.get();
+
+        if (username.equals(offerEntity.getUser().getUsername()) && passwordEncoder.matches(password, offerEntity.getUser().getPassword())) {
+            itemEntity.getOffers().remove(offerEntity);
+            offerRepository.deleteById(id);
+        } else throw new PasswordNotCorrectException();
+    }
 
 }

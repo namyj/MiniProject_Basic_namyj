@@ -66,18 +66,19 @@ public class OfferController {
     //
     //     return response;
     // }
-    //
-    // @DeleteMapping("/{offerId}")
-    // public ResponseDto delete(
-    //         @PathVariable("itemId") Long itemId,
-    //         @PathVariable("offerId") Long id,
-    //         @RequestBody OfferDto offerDto
-    // ) {
-    //     service.deleteOffer(itemId, id, offerDto);
-    //
-    //     ResponseDto response = new ResponseDto();
-    //     response.setMessage("제안을 삭제했습니다.");
-    //     return response;
-    // }
+
+    @DeleteMapping("/{offerId}")
+    public ResponseDto delete(
+            @PathVariable("itemId") Long itemId,
+            @PathVariable("offerId") Long id,
+            @RequestParam("username") String username,
+            @RequestParam("password") String password
+    ) {
+        service.deleteOffer(itemId, id, username, password);
+
+        ResponseDto response = new ResponseDto();
+        response.setMessage("제안을 삭제했습니다.");
+        return response;
+    }
 
 }
